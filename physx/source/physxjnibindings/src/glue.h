@@ -149,6 +149,35 @@ class JavaUserControllerHitReport : physx::PxUserControllerHitReport {
         jmethodID onObstacleHitMethodId;
 };
 
+class JSPvdTransport : SimplePvdTransport {
+    public:
+        JSPvdTransport(JNIEnv* env, jobject javaLocalRef) {
+            javaGlobalRef = env->NewGlobalRef(javaLocalRef);
+            jclass javaClass = env->GetObjectClass(javaLocalRef);
+            connectMethodId = env->GetMethodID(javaClass, "_connect", "()Z");
+            sendMethodId = env->GetMethodID(javaClass, "_send", "(JI)V");
+        }
+        
+        ~JSPvdTransport() {
+            jniThreadEnv.getEnv()->DeleteGlobalRef(javaGlobalRef);
+        }
+        
+        virtual bool connect() {
+            JNIEnv* _env = jniThreadEnv.getEnv();
+            return _env->CallBooleanMethod(javaGlobalRef, connectMethodId);
+        }
+
+        virtual void send(void* inBytes, unsigned int inLength) {
+            JNIEnv* _env = jniThreadEnv.getEnv();
+            _env->CallVoidMethod(javaGlobalRef, sendMethodId, (jlong) inBytes, (jint) inLength);
+        }
+
+    private:
+        jobject javaGlobalRef;
+        jmethodID connectMethodId;
+        jmethodID sendMethodId;
+};
+
 extern "C" {
 
 // JniThreadManager
@@ -177,8 +206,11 @@ JNIEXPORT jlong JNICALL Java_physx_PxTopLevelFunctions__1CreateCooking(JNIEnv*, 
 JNIEXPORT jlong JNICALL Java_physx_PxTopLevelFunctions__1CreateFoundation(JNIEnv*, jclass, jint version, jlong allocator, jlong errorCallback) {
     return (jlong) PxTopLevelFunctions::CreateFoundation(version, *((physx::PxDefaultAllocator*) allocator), *((physx::PxErrorCallback*) errorCallback));
 }
-JNIEXPORT jlong JNICALL Java_physx_PxTopLevelFunctions__1CreatePhysics(JNIEnv*, jclass, jint version, jlong foundation, jlong params) {
+JNIEXPORT jlong JNICALL Java_physx_PxTopLevelFunctions__1CreatePhysics__IJJ(JNIEnv*, jclass, jint version, jlong foundation, jlong params) {
     return (jlong) PxTopLevelFunctions::CreatePhysics(version, *((physx::PxFoundation*) foundation), *((physx::PxTolerancesScale*) params));
+}
+JNIEXPORT jlong JNICALL Java_physx_PxTopLevelFunctions__1CreatePhysics__IJJJ(JNIEnv*, jclass, jint version, jlong foundation, jlong params, jlong pvd) {
+    return (jlong) PxTopLevelFunctions::CreatePhysics(version, *((physx::PxFoundation*) foundation), *((physx::PxTolerancesScale*) params), (physx::PxPvd*) pvd);
 }
 JNIEXPORT jlong JNICALL Java_physx_PxTopLevelFunctions__1DefaultCpuDispatcherCreate(JNIEnv*, jclass, jint numThreads) {
     return (jlong) PxTopLevelFunctions::DefaultCpuDispatcherCreate(numThreads);
@@ -188,6 +220,9 @@ JNIEXPORT jboolean JNICALL Java_physx_PxTopLevelFunctions__1InitExtensions(JNIEn
 }
 JNIEXPORT jlong JNICALL Java_physx_PxTopLevelFunctions__1CreateCudaContextManager(JNIEnv*, jclass, jlong foundation, jlong desc) {
     return (jlong) PxTopLevelFunctions::CreateCudaContextManager(*((physx::PxFoundation*) foundation), *((physx::PxCudaContextManagerDesc*) desc));
+}
+JNIEXPORT jlong JNICALL Java_physx_PxTopLevelFunctions__1CreatePvd(JNIEnv*, jclass, jlong foundation) {
+    return (jlong) PxTopLevelFunctions::CreatePvd(*((physx::PxFoundation*) foundation));
 }
 JNIEXPORT jlong JNICALL Java_physx_PxTopLevelFunctions__1D6JointCreate(JNIEnv*, jclass, jlong physics, jlong actor0, jlong localFrame0, jlong actor1, jlong localFrame1) {
     return (jlong) PxTopLevelFunctions::D6JointCreate(*((physx::PxPhysics*) physics), (physx::PxRigidActor*) actor0, *((physx::PxTransform*) localFrame0), (physx::PxRigidActor*) actor1, *((physx::PxTransform*) localFrame1));
@@ -8812,6 +8847,81 @@ JNIEXPORT void JNICALL Java_physx_support_Vector_1PxVehicleWheels__1push_1back(J
 }
 JNIEXPORT void JNICALL Java_physx_support_Vector_1PxVehicleWheels__1delete_1native_1instance(JNIEnv*, jclass, jlong _address) {
     delete (Vector_PxVehicleWheels*) _address;
+}
+
+// PxPvdTransport
+JNIEXPORT jboolean JNICALL Java_physx_support_PxPvdTransport__1connect(JNIEnv*, jclass, jlong _address) {
+    physx::PxPvdTransport* self = (physx::PxPvdTransport*) _address;
+    return (jboolean) self->connect();
+}
+JNIEXPORT void JNICALL Java_physx_support_PxPvdTransport__1disconnect(JNIEnv*, jclass, jlong _address) {
+    physx::PxPvdTransport* self = (physx::PxPvdTransport*) _address;
+    self->disconnect();
+}
+JNIEXPORT jboolean JNICALL Java_physx_support_PxPvdTransport__1isConnected(JNIEnv*, jclass, jlong _address) {
+    physx::PxPvdTransport* self = (physx::PxPvdTransport*) _address;
+    return (jboolean) self->isConnected();
+}
+
+// SimplePvdTransport
+JNIEXPORT jboolean JNICALL Java_physx_support_SimplePvdTransport__1connect(JNIEnv*, jclass, jlong _address) {
+    SimplePvdTransport* self = (SimplePvdTransport*) _address;
+    return (jboolean) self->connect();
+}
+JNIEXPORT void JNICALL Java_physx_support_SimplePvdTransport__1send(JNIEnv*, jclass, jlong _address, jlong inBytes, jint inLength) {
+    SimplePvdTransport* self = (SimplePvdTransport*) _address;
+    self->send((void*) inBytes, inLength);
+}
+JNIEXPORT void JNICALL Java_physx_support_SimplePvdTransport__1delete_1native_1instance(JNIEnv*, jclass, jlong _address) {
+    delete (SimplePvdTransport*) _address;
+}
+
+// JSPvdTransport
+JNIEXPORT jlong JNICALL Java_physx_support_JSPvdTransport__1JSPvdTransport(JNIEnv* env, jobject obj) {
+    return (jlong) new JSPvdTransport(env, obj);
+}
+JNIEXPORT void JNICALL Java_physx_support_JSPvdTransport__1delete_1native_1instance(JNIEnv*, jclass, jlong address) {
+    delete (JSPvdTransport*) address;
+}
+
+// PxPvdInstrumentationFlags
+JNIEXPORT jlong JNICALL Java_physx_support_PxPvdInstrumentationFlags__1PxPvdInstrumentationFlags(JNIEnv*, jclass, jbyte flags) {
+    return (jlong) new physx::PxPvdInstrumentationFlags(flags);
+}
+JNIEXPORT jboolean JNICALL Java_physx_support_PxPvdInstrumentationFlags__1isSet(JNIEnv*, jclass, jlong _address, jint flag) {
+    physx::PxPvdInstrumentationFlags* self = (physx::PxPvdInstrumentationFlags*) _address;
+    return (jboolean) self->isSet((PxPvdInstrumentationFlagEnum) flag);
+}
+JNIEXPORT void JNICALL Java_physx_support_PxPvdInstrumentationFlags__1set(JNIEnv*, jclass, jlong _address, jint flag) {
+    physx::PxPvdInstrumentationFlags* self = (physx::PxPvdInstrumentationFlags*) _address;
+    self->set((PxPvdInstrumentationFlagEnum) flag);
+}
+JNIEXPORT void JNICALL Java_physx_support_PxPvdInstrumentationFlags__1clear(JNIEnv*, jclass, jlong _address, jint flag) {
+    physx::PxPvdInstrumentationFlags* self = (physx::PxPvdInstrumentationFlags*) _address;
+    self->clear((PxPvdInstrumentationFlagEnum) flag);
+}
+JNIEXPORT void JNICALL Java_physx_support_PxPvdInstrumentationFlags__1delete_1native_1instance(JNIEnv*, jclass, jlong _address) {
+    delete (physx::PxPvdInstrumentationFlags*) _address;
+}
+
+// PxPvd
+JNIEXPORT jboolean JNICALL Java_physx_support_PxPvd__1connect(JNIEnv*, jclass, jlong _address, jlong transport, jlong flags) {
+    physx::PxPvd* self = (physx::PxPvd*) _address;
+    return (jboolean) self->connect(*((physx::PxPvdTransport*) transport), *((physx::PxPvdInstrumentationFlags*) flags));
+}
+
+// PxPvdInstrumentationFlagEnum
+JNIEXPORT jint JNICALL Java_physx_support_PxPvdInstrumentationFlagEnum__1geteDEBUG(JNIEnv*, jclass) {
+    return PxPvdInstrumentationFlagEnum::eDEBUG;
+}
+JNIEXPORT jint JNICALL Java_physx_support_PxPvdInstrumentationFlagEnum__1getePROFILE(JNIEnv*, jclass) {
+    return PxPvdInstrumentationFlagEnum::ePROFILE;
+}
+JNIEXPORT jint JNICALL Java_physx_support_PxPvdInstrumentationFlagEnum__1geteMEMORY(JNIEnv*, jclass) {
+    return PxPvdInstrumentationFlagEnum::eMEMORY;
+}
+JNIEXPORT jint JNICALL Java_physx_support_PxPvdInstrumentationFlagEnum__1geteALL(JNIEnv*, jclass) {
+    return PxPvdInstrumentationFlagEnum::eALL;
 }
 
 // PxVehicleTopLevelFunctions
