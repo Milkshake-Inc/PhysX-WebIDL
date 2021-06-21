@@ -3252,23 +3252,25 @@ interface Vector_PxVehicleWheels {
     void push_back(PxVehicleWheels value);
 };
 
-[Prefix = "physx::", NoDelete] interface PxPvdTransport {
+[Prefix = "physx::", NoDelete]
+interface PxPvdTransport {
     boolean connect();
     void disconnect();
     boolean isConnected();
 };
 
 interface SimplePvdTransport {
-    void SimplePvdTransport();
-    void send(long inBytes, long inLength);
+    boolean connect();
+    void send(any inBytes, unsigned long inLength);
 };
 SimplePvdTransport implements PxPvdTransport;
 
 [JSImplementation="SimplePvdTransport"]
 interface JSPvdTransport {
     void JSPvdTransport();
+    boolean connect();
+    void send(any inBytes, unsigned long inLength);
 };
-JSPvdTransport implements SimplePvdTransport;
 
 enum PxPvdInstrumentationFlagEnum {
     "PxPvdInstrumentationFlagEnum::eDEBUG",
@@ -3277,15 +3279,15 @@ enum PxPvdInstrumentationFlagEnum {
     "PxPvdInstrumentationFlagEnum::eALL"
 };
 
-[Prefix = "physx::"] interface PxPvdInstrumentationFlags
-{
+[Prefix = "physx::"]
+interface PxPvdInstrumentationFlags {
     void PxPvdInstrumentationFlags(octet flags);
     boolean isSet(PxPvdInstrumentationFlagEnum flag);
     void set(PxPvdInstrumentationFlagEnum flag);
     void clear(PxPvdInstrumentationFlagEnum flag);
 };
 
-[Prefix = "physx::", NoDelete] interface PxPvd
-{
+[Prefix = "physx::", NoDelete]
+interface PxPvd {
     boolean connect([Ref] PxPvdTransport transport, [Ref] PxPvdInstrumentationFlags flags);
 };

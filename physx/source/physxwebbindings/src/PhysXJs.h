@@ -170,41 +170,31 @@ class SimpleSimulationEventCallback : physx::PxSimulationEventCallback {
         virtual void onAdvance(const physx::PxRigidBody *const *, const physx::PxTransform*, const physx::PxU32) { }
 };
 
-class SimplePvdTransport : physx::PxPvdTransport
-{
-   
-public:
-    SimplePvdTransport() { }
+class SimplePvdTransport : physx::PxPvdTransport {
+    public:
+        SimplePvdTransport() { }
 
-    virtual bool connect()
-    {
-        return true;
-    };
+        virtual bool connect() = 0;
 
-    virtual bool isConnected()
-    {
-        return false;
-    };
+        virtual bool isConnected() { return false; }
 
-    virtual void send(int inBytes, int inLength) { }
+        virtual void send(void* inBytes, uint32_t inLength) = 0;
 
-    virtual void disconnect() { };
+        virtual void disconnect() { }
 
-    bool write(const uint8_t *inBytes, uint32_t inLength)
-    {
-        send(int(inBytes),  int(inLength));
-        return true;
-    };
+        bool write(const uint8_t *inBytes, uint32_t inLength) {
+            send((void*) inBytes, inLength);
+            return true;
+        }
 
-    PxPvdTransport &lock()
-    {
-        return *this;
-    };
+        PxPvdTransport &lock() {
+            return *this;
+        }
 
-    void unlock() { }
-    void flush() { }
-    uint64_t getWrittenDataSize() { return 0; }
-    void release() { }
+        void unlock() { }
+        void flush() { }
+        uint64_t getWrittenDataSize() { return 0; }
+        void release() { }
 };
 
 // top-level functions are not supported by webidl binder, we need to wrap them in a class
