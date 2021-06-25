@@ -1,4 +1,5 @@
 #include "PxPhysicsAPI.h"
+#include "extensions/PxCollectionExt.h"
 #include <vector>
 
 #include "BatchVehicleUpdate.h"
@@ -104,6 +105,7 @@ typedef std::vector<physx::PxWheelQueryResult> Vector_PxWheelQueryResult;
 typedef std::vector<PxVehicleWheelsPtr> Vector_PxVehicleWheels;
 
 typedef std::vector<physx::PxReal> Vector_PxReal;
+typedef std::vector<physx::PxU8> Vector_PxU8;
 typedef std::vector<physx::PxU16> Vector_PxU16;
 typedef std::vector<physx::PxU32> Vector_PxU32;
 typedef std::vector<physx::PxVec3> Vector_PxVec3;
@@ -344,16 +346,16 @@ class TypeHelpers {
             return &base[index];
         }
 
-        static PxU8ConstPtr voidToU8ConstPtr(void* voidPtr) {
-            return (PxU8ConstPtr) voidPtr;
+        static PxU8Ptr voidToU8Ptr(void* voidPtr) {
+            return (PxU8Ptr) voidPtr;
         }
 
-        static PxU16ConstPtr voidToU16ConstPtr(void* voidPtr) {
-            return (PxU16ConstPtr) voidPtr;
+        static PxU16Ptr voidToU16Ptr(void* voidPtr) {
+            return (PxU16Ptr) voidPtr;
         }
 
-        static PxU32ConstPtr voidToU32ConstPtr(void* voidPtr) {
-            return (PxU32ConstPtr) voidPtr;
+        static PxU32Ptr voidToU32Ptr(void* voidPtr) {
+            return (PxU32Ptr) voidPtr;
         }
 
         static PxRealPtr voidToRealPtr(void* voidPtr) {
