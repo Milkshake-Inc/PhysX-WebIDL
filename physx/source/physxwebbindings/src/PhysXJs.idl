@@ -635,7 +635,7 @@ interface PxMaterial {
     float getStaticFriction();
     void setRestitution(float coef);
     float getRestitution();
-    void setFlag(PxMaterialFlagEnum, boolean b);
+    void setFlag(PxMaterialFlagEnum flag, boolean b);
     void setFlags(PxMaterialFlags flags);
     [Value] PxMaterialFlags getFlags();
     void setFrictionCombineMode(PxCombineModeEnum combMode);
