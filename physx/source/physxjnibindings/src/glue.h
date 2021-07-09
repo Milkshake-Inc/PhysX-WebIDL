@@ -5854,6 +5854,68 @@ JNIEXPORT void JNICALL Java_physx_physics_PxOverlapQueryResult__1setHasBlock(JNI
 }
 
 // PxMaterial
+JNIEXPORT jint JNICALL Java_physx_physics_PxMaterial__1getReferenceCount(JNIEnv*, jclass, jlong _address) {
+    physx::PxMaterial* self = (physx::PxMaterial*) _address;
+    return (jint) self->getReferenceCount();
+}
+JNIEXPORT void JNICALL Java_physx_physics_PxMaterial__1acquireReference(JNIEnv*, jclass, jlong _address) {
+    physx::PxMaterial* self = (physx::PxMaterial*) _address;
+    self->acquireReference();
+}
+JNIEXPORT void JNICALL Java_physx_physics_PxMaterial__1setDynamicFriction(JNIEnv*, jclass, jlong _address, jfloat coef) {
+    physx::PxMaterial* self = (physx::PxMaterial*) _address;
+    self->setDynamicFriction(coef);
+}
+JNIEXPORT jfloat JNICALL Java_physx_physics_PxMaterial__1getDynamicFriction(JNIEnv*, jclass, jlong _address) {
+    physx::PxMaterial* self = (physx::PxMaterial*) _address;
+    return (jfloat) self->getDynamicFriction();
+}
+JNIEXPORT void JNICALL Java_physx_physics_PxMaterial__1setStaticFriction(JNIEnv*, jclass, jlong _address, jfloat coef) {
+    physx::PxMaterial* self = (physx::PxMaterial*) _address;
+    self->setStaticFriction(coef);
+}
+JNIEXPORT jfloat JNICALL Java_physx_physics_PxMaterial__1getStaticFriction(JNIEnv*, jclass, jlong _address) {
+    physx::PxMaterial* self = (physx::PxMaterial*) _address;
+    return (jfloat) self->getStaticFriction();
+}
+JNIEXPORT void JNICALL Java_physx_physics_PxMaterial__1setRestitution(JNIEnv*, jclass, jlong _address, jfloat coef) {
+    physx::PxMaterial* self = (physx::PxMaterial*) _address;
+    self->setRestitution(coef);
+}
+JNIEXPORT jfloat JNICALL Java_physx_physics_PxMaterial__1getRestitution(JNIEnv*, jclass, jlong _address) {
+    physx::PxMaterial* self = (physx::PxMaterial*) _address;
+    return (jfloat) self->getRestitution();
+}
+JNIEXPORT void JNICALL Java_physx_physics_PxMaterial__1setFlag(JNIEnv*, jclass, jlong _address, jint flag, jboolean b) {
+    physx::PxMaterial* self = (physx::PxMaterial*) _address;
+    self->setFlag((PxMaterialFlagEnum) flag, b);
+}
+JNIEXPORT void JNICALL Java_physx_physics_PxMaterial__1setFlags(JNIEnv*, jclass, jlong _address, jlong flags) {
+    physx::PxMaterial* self = (physx::PxMaterial*) _address;
+    self->setFlags(*((physx::PxMaterialFlags*) flags));
+}
+JNIEXPORT jlong JNICALL Java_physx_physics_PxMaterial__1getFlags(JNIEnv*, jclass, jlong _address) {
+    static thread_local physx::PxMaterialFlags _cache;
+    physx::PxMaterial* self = (physx::PxMaterial*) _address;
+    _cache = self->getFlags();
+    return (jlong) &_cache;
+}
+JNIEXPORT void JNICALL Java_physx_physics_PxMaterial__1setFrictionCombineMode(JNIEnv*, jclass, jlong _address, jint combMode) {
+    physx::PxMaterial* self = (physx::PxMaterial*) _address;
+    self->setFrictionCombineMode((PxCombineModeEnum) combMode);
+}
+JNIEXPORT jint JNICALL Java_physx_physics_PxMaterial__1getFrictionCombineMode(JNIEnv*, jclass, jlong _address) {
+    physx::PxMaterial* self = (physx::PxMaterial*) _address;
+    return (jint) self->getFrictionCombineMode();
+}
+JNIEXPORT void JNICALL Java_physx_physics_PxMaterial__1setRestitutionCombineMode(JNIEnv*, jclass, jlong _address, jint combMode) {
+    physx::PxMaterial* self = (physx::PxMaterial*) _address;
+    self->setRestitutionCombineMode((PxCombineModeEnum) combMode);
+}
+JNIEXPORT jint JNICALL Java_physx_physics_PxMaterial__1getRestitutionCombineMode(JNIEnv*, jclass, jlong _address) {
+    physx::PxMaterial* self = (physx::PxMaterial*) _address;
+    return (jint) self->getRestitutionCombineMode();
+}
 JNIEXPORT jlong JNICALL Java_physx_physics_PxMaterial__1getUserData(JNIEnv*, jclass, jlong _address) {
     physx::PxMaterial* _self = (physx::PxMaterial*) _address;
     return (jlong) _self->userData;
@@ -5861,6 +5923,26 @@ JNIEXPORT jlong JNICALL Java_physx_physics_PxMaterial__1getUserData(JNIEnv*, jcl
 JNIEXPORT void JNICALL Java_physx_physics_PxMaterial__1setUserData(JNIEnv*, jclass, jlong _address, jlong value) {
     physx::PxMaterial* _self = (physx::PxMaterial*) _address;
     _self->userData = (void*) value;
+}
+
+// PxMaterialFlags
+JNIEXPORT jlong JNICALL Java_physx_physics_PxMaterialFlags__1PxMaterialFlags(JNIEnv*, jclass, jshort flags) {
+    return (jlong) new physx::PxMaterialFlags(flags);
+}
+JNIEXPORT jboolean JNICALL Java_physx_physics_PxMaterialFlags__1isSet(JNIEnv*, jclass, jlong _address, jint flag) {
+    physx::PxMaterialFlags* self = (physx::PxMaterialFlags*) _address;
+    return (jboolean) self->isSet((PxMaterialFlagEnum) flag);
+}
+JNIEXPORT void JNICALL Java_physx_physics_PxMaterialFlags__1set(JNIEnv*, jclass, jlong _address, jint flag) {
+    physx::PxMaterialFlags* self = (physx::PxMaterialFlags*) _address;
+    self->set((PxMaterialFlagEnum) flag);
+}
+JNIEXPORT void JNICALL Java_physx_physics_PxMaterialFlags__1clear(JNIEnv*, jclass, jlong _address, jint flag) {
+    physx::PxMaterialFlags* self = (physx::PxMaterialFlags*) _address;
+    self->clear((PxMaterialFlagEnum) flag);
+}
+JNIEXPORT void JNICALL Java_physx_physics_PxMaterialFlags__1delete_1native_1instance(JNIEnv*, jclass, jlong _address) {
+    delete (physx::PxMaterialFlags*) _address;
 }
 
 // PxPairFlags
@@ -8206,6 +8288,20 @@ JNIEXPORT jint JNICALL Java_physx_physics_PxBroadPhaseTypeEnum__1geteLAST(JNIEnv
     return PxBroadPhaseTypeEnum::eLAST;
 }
 
+// PxCombineModeEnum
+JNIEXPORT jint JNICALL Java_physx_physics_PxCombineModeEnum__1geteAVERAGE(JNIEnv*, jclass) {
+    return PxCombineModeEnum::eAVERAGE;
+}
+JNIEXPORT jint JNICALL Java_physx_physics_PxCombineModeEnum__1geteMIN(JNIEnv*, jclass) {
+    return PxCombineModeEnum::eMIN;
+}
+JNIEXPORT jint JNICALL Java_physx_physics_PxCombineModeEnum__1geteMULTIPLY(JNIEnv*, jclass) {
+    return PxCombineModeEnum::eMULTIPLY;
+}
+JNIEXPORT jint JNICALL Java_physx_physics_PxCombineModeEnum__1geteMAX(JNIEnv*, jclass) {
+    return PxCombineModeEnum::eMAX;
+}
+
 // PxConstraintFlagEnum
 JNIEXPORT jint JNICALL Java_physx_physics_PxConstraintFlagEnum__1geteBROKEN(JNIEnv*, jclass) {
     return PxConstraintFlagEnum::eBROKEN;
@@ -8333,6 +8429,17 @@ JNIEXPORT jint JNICALL Java_physx_physics_PxHitFlagEnum__1geteDEFAULT(JNIEnv*, j
 }
 JNIEXPORT jint JNICALL Java_physx_physics_PxHitFlagEnum__1geteMODIFIABLE_1FLAGS(JNIEnv*, jclass) {
     return PxHitFlagEnum::eMODIFIABLE_FLAGS;
+}
+
+// PxMaterialFlagEnum
+JNIEXPORT jint JNICALL Java_physx_physics_PxMaterialFlagEnum__1geteDISABLE_1FRICTION(JNIEnv*, jclass) {
+    return PxMaterialFlagEnum::eDISABLE_FRICTION;
+}
+JNIEXPORT jint JNICALL Java_physx_physics_PxMaterialFlagEnum__1geteDISABLE_1STRONG_1FRICTION(JNIEnv*, jclass) {
+    return PxMaterialFlagEnum::eDISABLE_STRONG_FRICTION;
+}
+JNIEXPORT jint JNICALL Java_physx_physics_PxMaterialFlagEnum__1geteIMPROVED_1PATCH_1FRICTION(JNIEnv*, jclass) {
+    return PxMaterialFlagEnum::eIMPROVED_PATCH_FRICTION;
 }
 
 // PxPairFilteringModeEnum
