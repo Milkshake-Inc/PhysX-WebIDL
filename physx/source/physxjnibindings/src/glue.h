@@ -218,6 +218,9 @@ JNIEXPORT jlong JNICALL Java_physx_PxTopLevelFunctions__1DefaultCpuDispatcherCre
 JNIEXPORT jboolean JNICALL Java_physx_PxTopLevelFunctions__1InitExtensions(JNIEnv*, jclass, jlong physics) {
     return (jboolean) PxTopLevelFunctions::InitExtensions(*((physx::PxPhysics*) physics));
 }
+JNIEXPORT void JNICALL Java_physx_PxTopLevelFunctions__1CloseExtensions(JNIEnv*, jclass) {
+    PxTopLevelFunctions::CloseExtensions();
+}
 JNIEXPORT jlong JNICALL Java_physx_PxTopLevelFunctions__1CreateCudaContextManager(JNIEnv*, jclass, jlong foundation, jlong desc) {
     return (jlong) PxTopLevelFunctions::CreateCudaContextManager(*((physx::PxFoundation*) foundation), *((physx::PxCudaContextManagerDesc*) desc));
 }
@@ -1625,11 +1628,17 @@ JNIEXPORT jint JNICALL Java_physx_common_PxQuat__1_1sizeOf(JNIEnv*, jclass) {
 JNIEXPORT jlong JNICALL Java_physx_common_PxQuat__1_1placement_1new_1PxQuat__J(JNIEnv*, jclass, jlong _placement_address) {
     return (jlong) new((void*)_placement_address) physx::PxQuat();
 }
+JNIEXPORT jlong JNICALL Java_physx_common_PxQuat__1_1placement_1new_1PxQuat__JI(JNIEnv*, jclass, jlong _placement_address, jint r) {
+    return (jlong) new((void*)_placement_address) physx::PxQuat((PxIDENTITYEnum) r);
+}
 JNIEXPORT jlong JNICALL Java_physx_common_PxQuat__1_1placement_1new_1PxQuat__JFFFF(JNIEnv*, jclass, jlong _placement_address, jfloat x, jfloat y, jfloat z, jfloat w) {
     return (jlong) new((void*)_placement_address) physx::PxQuat(x, y, z, w);
 }
 JNIEXPORT jlong JNICALL Java_physx_common_PxQuat__1PxQuat__(JNIEnv*, jclass) {
     return (jlong) new physx::PxQuat();
+}
+JNIEXPORT jlong JNICALL Java_physx_common_PxQuat__1PxQuat__I(JNIEnv*, jclass, jint r) {
+    return (jlong) new physx::PxQuat((PxIDENTITYEnum) r);
 }
 JNIEXPORT jlong JNICALL Java_physx_common_PxQuat__1PxQuat__FFFF(JNIEnv*, jclass, jfloat x, jfloat y, jfloat z, jfloat w) {
     return (jlong) new physx::PxQuat(x, y, z, w);
@@ -1682,11 +1691,17 @@ JNIEXPORT void JNICALL Java_physx_common_PxTolerancesScale__1delete_1native_1ins
 JNIEXPORT jint JNICALL Java_physx_common_PxTransform__1_1sizeOf(JNIEnv*, jclass) {
     return sizeof(physx::PxTransform);
 }
+JNIEXPORT jlong JNICALL Java_physx_common_PxTransform__1_1placement_1new_1PxTransform__J(JNIEnv*, jclass, jlong _placement_address) {
+    return (jlong) new((void*)_placement_address) physx::PxTransform();
+}
 JNIEXPORT jlong JNICALL Java_physx_common_PxTransform__1_1placement_1new_1PxTransform__JI(JNIEnv*, jclass, jlong _placement_address, jint r) {
     return (jlong) new((void*)_placement_address) physx::PxTransform((PxIDENTITYEnum) r);
 }
 JNIEXPORT jlong JNICALL Java_physx_common_PxTransform__1_1placement_1new_1PxTransform__JJJ(JNIEnv*, jclass, jlong _placement_address, jlong p0, jlong q0) {
     return (jlong) new((void*)_placement_address) physx::PxTransform(*((physx::PxVec3*) p0), *((physx::PxQuat*) q0));
+}
+JNIEXPORT jlong JNICALL Java_physx_common_PxTransform__1PxTransform__(JNIEnv*, jclass) {
+    return (jlong) new physx::PxTransform();
 }
 JNIEXPORT jlong JNICALL Java_physx_common_PxTransform__1PxTransform__I(JNIEnv*, jclass, jint r) {
     return (jlong) new physx::PxTransform((PxIDENTITYEnum) r);

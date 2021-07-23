@@ -227,8 +227,7 @@ class PxTopLevelFunctions {
             return PxCreateControllerManager(scene, lockingEnabled);
         }
 
-        static physx::PxPvd *CreatePvd(physx::PxFoundation &foundation)
-        {
+        static physx::PxPvd *CreatePvd(physx::PxFoundation &foundation) {
             return PxCreatePvd(foundation);
         }
 
@@ -238,6 +237,10 @@ class PxTopLevelFunctions {
 
         static bool InitExtensions(physx::PxPhysics& physics) {
             return PxInitExtensions(physics, NULL);
+        }
+
+        static void CloseExtensions() {
+            PxCloseExtensions();
         }
 
         static physx::PxCudaContextManager* CreateCudaContextManager(physx::PxFoundation& foundation, const physx::PxCudaContextManagerDesc& desc) {
