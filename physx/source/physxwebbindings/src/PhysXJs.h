@@ -23,6 +23,7 @@ typedef physx::PxArticulationMotion::Enum PxArticulationMotionEnum;
 typedef physx::PxBaseFlag::Enum PxBaseFlagEnum;
 typedef physx::PxBroadPhaseType::Enum PxBroadPhaseTypeEnum;
 typedef physx::PxCapsuleClimbingMode::Enum PxCapsuleClimbingModeEnum;
+typedef physx::PxCombineMode::Enum PxCombineModeEnum;
 typedef physx::PxConstraintFlag::Enum PxConstraintFlagEnum;
 typedef physx::PxContactPairFlag::Enum PxContactPairFlagEnum;
 typedef physx::PxContactPairHeaderFlag::Enum PxContactPairHeaderFlagEnum;
@@ -49,6 +50,7 @@ typedef physx::PxHeightFieldFormat::Enum PxHeightFieldFormatEnum;
 typedef physx::PxHitFlag::Enum PxHitFlagEnum;
 typedef physx::PxIDENTITY PxIDENTITYEnum;
 typedef physx::PxJointActorIndex::Enum PxJointActorIndexEnum;
+typedef physx::PxMaterialFlag::Enum PxMaterialFlagEnum;
 typedef physx::PxMeshCookingHint::Enum PxMeshCookingHintEnum;
 typedef physx::PxMeshFlag::Enum PxMeshFlagEnum;
 typedef physx::PxMeshGeometryFlag::Enum PxMeshGeometryFlagEnum;
@@ -229,8 +231,7 @@ class PxTopLevelFunctions {
             return PxCreateControllerManager(scene, lockingEnabled);
         }
 
-        static physx::PxPvd *CreatePvd(physx::PxFoundation &foundation)
-        {
+        static physx::PxPvd *CreatePvd(physx::PxFoundation &foundation) {
             return PxCreatePvd(foundation);
         }
 
@@ -240,6 +241,10 @@ class PxTopLevelFunctions {
 
         static bool InitExtensions(physx::PxPhysics& physics) {
             return PxInitExtensions(physics, NULL);
+        }
+
+        static void CloseExtensions() {
+            PxCloseExtensions();
         }
 
         static physx::PxCudaContextManager* CreateCudaContextManager(physx::PxFoundation& foundation, const physx::PxCudaContextManagerDesc& desc) {
