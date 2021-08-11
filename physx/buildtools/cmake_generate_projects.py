@@ -339,6 +339,10 @@ class CMakePreset:
             outString = outString + ' -DCMAKE_C_COMPILER=clang'
             outString = outString + ' -DCMAKE_CXX_COMPILER=clang++'
             return outString
+        elif self.targetPlatform == 'jni_mac64':
+            outString = outString + ' -DTARGET_BUILD_PLATFORM=jni_mac64'
+            outString = outString + ' -DPX_OUTPUT_ARCH=x86'
+            return outString
         elif self.targetPlatform == 'jni_win64':
             outString = outString + ' -Ax64'
             outString = outString + ' -DTARGET_BUILD_PLATFORM=jni_windows'

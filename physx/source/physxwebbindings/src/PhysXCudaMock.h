@@ -44,7 +44,7 @@ namespace physx {
             unsigned int getMaxThreadsPerBlock() { return 0; }
             const char* getDeviceName() { return "mock"; }
             PxCudaInteropMode::Enum getInteropMode() { return PxCudaInteropMode::Enum::NO_INTEROP; }
-            void setUsingConcurrentStreams(bool flag) { }
+            void setUsingConcurrentStreams(bool) { }
             bool getUsingConcurrentStreams() { return false; }
             int usingDedicatedGPU() { return 0; }
             void release() { }

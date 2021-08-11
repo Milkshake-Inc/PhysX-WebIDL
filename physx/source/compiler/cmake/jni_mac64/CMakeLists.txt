@@ -80,6 +80,7 @@ INCLUDE(PhysXTask.cmake)
 INCLUDE(SceneQuery.cmake)
 INCLUDE(SimulationController.cmake)
 INCLUDE(FastXml.cmake)
+INCLUDE(jni_mac64/PhysXJniBindings.cmake)
 
 # Set folder PhysX SDK to all common SDK source projects
 SET_PROPERTY(TARGET PhysX PROPERTY FOLDER "PhysX SDK")

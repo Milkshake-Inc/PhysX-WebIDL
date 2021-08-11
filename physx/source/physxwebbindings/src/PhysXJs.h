@@ -2,6 +2,10 @@
 #include "extensions/PxCollectionExt.h"
 #include <vector>
 
+#if defined(__EMSCRIPTEN__) || defined(__APPLE__)
+    #include "PhysXCudaMock.h"
+#endif
+
 #include "BatchVehicleUpdate.h"
 
 // enums within namespaces are not supported by webidl binder, as a hack we can use typedefs
@@ -239,7 +243,9 @@ class PxTopLevelFunctions {
         }
 
         static physx::PxCudaContextManager* CreateCudaContextManager(physx::PxFoundation& foundation, const physx::PxCudaContextManagerDesc& desc) {
-            #ifdef __EMSCRIPTEN__
+            #if defined(__EMSCRIPTEN__) || defined(__APPLE__)
+                PX_UNUSED(foundation);
+                PX_UNUSED(desc);
                 return NULL;
             #else
                 return PxCreateCudaContextManager(foundation, desc);
