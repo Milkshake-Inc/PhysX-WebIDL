@@ -101,6 +101,7 @@ typedef physx::PxRaycastBufferN<10> PxRaycastBuffer10;
 typedef physx::PxSweepBufferN<10> PxSweepBuffer10;
 
 typedef std::vector<PxMaterialConstPtr> Vector_PxMaterialConst;
+typedef std::vector<PxActorPtr> Vector_PxActorPtr;
 typedef std::vector<physx::PxHeightFieldSample> Vector_PxHeightFieldSample;
 typedef std::vector<physx::PxRaycastHit> Vector_PxRaycastHit;
 typedef std::vector<physx::PxRaycastQueryResult> Vector_PxRaycastQueryResult;
@@ -390,5 +391,15 @@ class SupportFunctions {
             physx::PxShape* shapePtr;
             actor.getShapes(&shapePtr, 1, i);
             return shapePtr;
+        }
+
+        static Vector_PxActorPtr& PxScene_getActiveActors(physx::PxScene* scene) {
+            static Vector_PxActorPtr activeActors;
+            physx::PxU32 nbActors;
+            physx::PxActor** actors = scene->getActiveActors(nbActors);
+
+            activeActors.resize(static_cast<size_t>(nbActors));
+            std::memcpy(activeActors.data(), actors, static_cast<size_t>(sizeof(physx::PxActor*) * nbActors));
+            return activeActors;
         }
 };

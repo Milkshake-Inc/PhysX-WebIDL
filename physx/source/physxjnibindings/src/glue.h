@@ -8699,6 +8699,9 @@ JNIEXPORT jint JNICALL Java_physx_physics_PxTriggerPairFlagEnum__1geteNEXT_1FREE
 JNIEXPORT jlong JNICALL Java_physx_support_SupportFunctions__1PxActor_1getShape(JNIEnv*, jclass, jlong actor, jint index) {
     return (jlong) SupportFunctions::PxActor_getShape(*((physx::PxRigidActor*) actor), index);
 }
+JNIEXPORT jlong JNICALL Java_physx_support_SupportFunctions__1PxScene_1getActiveActors(JNIEnv*, jclass, jlong scene) {
+    return (jlong) &SupportFunctions::PxScene_getActiveActors((physx::PxScene*) scene);
+}
 JNIEXPORT void JNICALL Java_physx_support_SupportFunctions__1delete_1native_1instance(JNIEnv*, jclass, jlong _address) {
     delete (SupportFunctions*) _address;
 }
@@ -9025,6 +9028,37 @@ JNIEXPORT void JNICALL Java_physx_support_Vector_1PxVec3__1clear(JNIEnv*, jclass
 }
 JNIEXPORT void JNICALL Java_physx_support_Vector_1PxVec3__1delete_1native_1instance(JNIEnv*, jclass, jlong _address) {
     delete (Vector_PxVec3*) _address;
+}
+
+// Vector_PxActorPtr
+JNIEXPORT jlong JNICALL Java_physx_support_Vector_1PxActorPtr__1Vector_1PxActorPtr__(JNIEnv*, jclass) {
+    return (jlong) new Vector_PxActorPtr();
+}
+JNIEXPORT jlong JNICALL Java_physx_support_Vector_1PxActorPtr__1Vector_1PxActorPtr__I(JNIEnv*, jclass, jint size) {
+    return (jlong) new Vector_PxActorPtr(size);
+}
+JNIEXPORT jlong JNICALL Java_physx_support_Vector_1PxActorPtr__1at(JNIEnv*, jclass, jlong _address, jint index) {
+    Vector_PxActorPtr* self = (Vector_PxActorPtr*) _address;
+    return (jlong) self->at(index);
+}
+JNIEXPORT jlong JNICALL Java_physx_support_Vector_1PxActorPtr__1data(JNIEnv*, jclass, jlong _address) {
+    Vector_PxActorPtr* self = (Vector_PxActorPtr*) _address;
+    return (jlong) self->data();
+}
+JNIEXPORT jint JNICALL Java_physx_support_Vector_1PxActorPtr__1size(JNIEnv*, jclass, jlong _address) {
+    Vector_PxActorPtr* self = (Vector_PxActorPtr*) _address;
+    return (jint) self->size();
+}
+JNIEXPORT void JNICALL Java_physx_support_Vector_1PxActorPtr__1push_1back(JNIEnv*, jclass, jlong _address, jlong value) {
+    Vector_PxActorPtr* self = (Vector_PxActorPtr*) _address;
+    self->push_back((physx::PxActor*) value);
+}
+JNIEXPORT void JNICALL Java_physx_support_Vector_1PxActorPtr__1clear(JNIEnv*, jclass, jlong _address) {
+    Vector_PxActorPtr* self = (Vector_PxActorPtr*) _address;
+    self->clear();
+}
+JNIEXPORT void JNICALL Java_physx_support_Vector_1PxActorPtr__1delete_1native_1instance(JNIEnv*, jclass, jlong _address) {
+    delete (Vector_PxActorPtr*) _address;
 }
 
 // Vector_PxRaycastQueryResult
