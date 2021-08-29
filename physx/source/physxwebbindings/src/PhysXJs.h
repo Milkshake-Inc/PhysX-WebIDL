@@ -1,6 +1,7 @@
 #include "PxPhysicsAPI.h"
 #include "extensions/PxCollectionExt.h"
 #include <vector>
+#include <cstring>
 
 #if defined(__EMSCRIPTEN__) || defined(__APPLE__)
     #include "PhysXCudaMock.h"

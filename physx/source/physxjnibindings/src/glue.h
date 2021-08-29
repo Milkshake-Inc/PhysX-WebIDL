@@ -2692,6 +2692,14 @@ JNIEXPORT jlong JNICALL Java_physx_extensions_PxJoint__1getScene(JNIEnv*, jclass
     physx::PxJoint* self = (physx::PxJoint*) _address;
     return (jlong) self->getScene();
 }
+JNIEXPORT jlong JNICALL Java_physx_extensions_PxJoint__1getUserData(JNIEnv*, jclass, jlong _address) {
+    physx::PxJoint* _self = (physx::PxJoint*) _address;
+    return (jlong) _self->userData;
+}
+JNIEXPORT void JNICALL Java_physx_extensions_PxJoint__1setUserData(JNIEnv*, jclass, jlong _address, jlong value) {
+    physx::PxJoint* _self = (physx::PxJoint*) _address;
+    _self->userData = (void*) value;
+}
 
 // PxJointAngularLimitPair
 JNIEXPORT jlong JNICALL Java_physx_extensions_PxJointAngularLimitPair__1PxJointAngularLimitPair(JNIEnv*, jclass, jfloat lowerLimit, jfloat upperLimit, jlong spring) {
@@ -4645,6 +4653,14 @@ JNIEXPORT jlong JNICALL Java_physx_physics_PxArticulationBase__1getWorldBounds(J
 JNIEXPORT jlong JNICALL Java_physx_physics_PxArticulationBase__1getAggregate(JNIEnv*, jclass, jlong _address) {
     physx::PxArticulationBase* self = (physx::PxArticulationBase*) _address;
     return (jlong) self->getAggregate();
+}
+JNIEXPORT jlong JNICALL Java_physx_physics_PxArticulationBase__1getUserData(JNIEnv*, jclass, jlong _address) {
+    physx::PxArticulationBase* _self = (physx::PxArticulationBase*) _address;
+    return (jlong) _self->userData;
+}
+JNIEXPORT void JNICALL Java_physx_physics_PxArticulationBase__1setUserData(JNIEnv*, jclass, jlong _address, jlong value) {
+    physx::PxArticulationBase* _self = (physx::PxArticulationBase*) _address;
+    _self->userData = (void*) value;
 }
 
 // PxArticulationCache
