@@ -1,4 +1,6 @@
 #include "PxPhysicsAPI.h"
+#ifndef PX_CUDA_MOCK_H
+#define PX_CUDA_MOCK_H
 
 namespace physx {
 
@@ -59,3 +61,5 @@ namespace physx {
             PxU32 memoryPageSize[1];
     };
 }
+
+#endif
