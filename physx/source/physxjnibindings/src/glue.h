@@ -41,6 +41,19 @@ class JniThreadManager {
         }
 };
 
+class JavaNativeRef {
+    public:
+        JavaNativeRef(JNIEnv *env, jobject javaRef) {
+            javaGlobalRef = env->NewGlobalRef(javaRef);
+        }
+        
+        ~JavaNativeRef() {
+            jniThreadEnv.getEnv()->DeleteGlobalRef(javaGlobalRef);
+        }
+        
+        jobject javaGlobalRef;
+};
+
 class JavaSimulationEventCallback : SimpleSimulationEventCallback {
     public:
         JavaSimulationEventCallback(JNIEnv* env, jobject javaLocalRef) {
@@ -186,6 +199,16 @@ JNIEXPORT jboolean JNICALL Java_physx_JniThreadManager__1init(JNIEnv* env, jclas
 }
 JNIEXPORT void JNICALL Java_physx_JniThreadManager__1delete_1native_1instance(JNIEnv*, jclass, jlong address) {
     delete (JniThreadManager*) address;
+}
+// JavaNativeRef
+JNIEXPORT jlong JNICALL Java_physx_JavaNativeRef__1new_1instance(JNIEnv* env, jclass, jobject javaRef) {
+    return (jlong) new JavaNativeRef(env, javaRef);
+}
+JNIEXPORT void JNICALL Java_physx_JavaNativeRef__1delete_1instance(JNIEnv*, jclass, jlong address) {
+    delete (JavaNativeRef*) address;
+}
+JNIEXPORT jobject JNICALL Java_physx_JavaNativeRef__1get_1java_1ref(JNIEnv*, jclass, jlong address) {
+    return ((JavaNativeRef*) address)->javaGlobalRef;
 }
 
 // PxTopLevelFunctions
