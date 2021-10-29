@@ -103,6 +103,7 @@ typedef physx::PxSweepBufferN<10> PxSweepBuffer10;
 
 typedef std::vector<PxMaterialConstPtr> Vector_PxMaterialConst;
 typedef std::vector<PxActorPtr> Vector_PxActorPtr;
+typedef std::vector<physx::PxContactPairPoint> Vector_PxContactPairPoint;
 typedef std::vector<physx::PxHeightFieldSample> Vector_PxHeightFieldSample;
 typedef std::vector<physx::PxRaycastHit> Vector_PxRaycastHit;
 typedef std::vector<physx::PxRaycastQueryResult> Vector_PxRaycastQueryResult;

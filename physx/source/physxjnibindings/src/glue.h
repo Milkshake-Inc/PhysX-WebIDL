@@ -5472,6 +5472,10 @@ JNIEXPORT void JNICALL Java_physx_physics_PxContactPairHeaderFlags__1delete_1nat
 }
 
 // PxContactPair
+JNIEXPORT jint JNICALL Java_physx_physics_PxContactPair__1extractContacts(JNIEnv*, jclass, jlong _address, jlong userBuffer, jint bufferSize) {
+    physx::PxContactPair* self = (physx::PxContactPair*) _address;
+    return (jint) self->extractContacts((physx::PxContactPairPoint*) userBuffer, bufferSize);
+}
 JNIEXPORT void JNICALL Java_physx_physics_PxContactPair__1delete_1native_1instance(JNIEnv*, jclass, jlong _address) {
     delete (physx::PxContactPair*) _address;
 }
@@ -5571,6 +5575,59 @@ JNIEXPORT jint JNICALL Java_physx_physics_PxContactPairHeader__1getNbPairs(JNIEn
 JNIEXPORT void JNICALL Java_physx_physics_PxContactPairHeader__1setNbPairs(JNIEnv*, jclass, jlong _address, jint value) {
     physx::PxContactPairHeader* _self = (physx::PxContactPairHeader*) _address;
     _self->nbPairs = value;
+}
+
+// PxContactPairPoint
+JNIEXPORT void JNICALL Java_physx_physics_PxContactPairPoint__1delete_1native_1instance(JNIEnv*, jclass, jlong _address) {
+    delete (physx::PxContactPairPoint*) _address;
+}
+JNIEXPORT jlong JNICALL Java_physx_physics_PxContactPairPoint__1getPosition(JNIEnv*, jclass, jlong _address) {
+    physx::PxContactPairPoint* _self = (physx::PxContactPairPoint*) _address;
+    return (jlong) &_self->position;
+}
+JNIEXPORT void JNICALL Java_physx_physics_PxContactPairPoint__1setPosition(JNIEnv*, jclass, jlong _address, jlong value) {
+    physx::PxContactPairPoint* _self = (physx::PxContactPairPoint*) _address;
+    _self->position = *((physx::PxVec3*) value);
+}
+JNIEXPORT jfloat JNICALL Java_physx_physics_PxContactPairPoint__1getSeparation(JNIEnv*, jclass, jlong _address) {
+    physx::PxContactPairPoint* _self = (physx::PxContactPairPoint*) _address;
+    return (jfloat) _self->separation;
+}
+JNIEXPORT void JNICALL Java_physx_physics_PxContactPairPoint__1setSeparation(JNIEnv*, jclass, jlong _address, jfloat value) {
+    physx::PxContactPairPoint* _self = (physx::PxContactPairPoint*) _address;
+    _self->separation = value;
+}
+JNIEXPORT jlong JNICALL Java_physx_physics_PxContactPairPoint__1getNormal(JNIEnv*, jclass, jlong _address) {
+    physx::PxContactPairPoint* _self = (physx::PxContactPairPoint*) _address;
+    return (jlong) &_self->normal;
+}
+JNIEXPORT void JNICALL Java_physx_physics_PxContactPairPoint__1setNormal(JNIEnv*, jclass, jlong _address, jlong value) {
+    physx::PxContactPairPoint* _self = (physx::PxContactPairPoint*) _address;
+    _self->normal = *((physx::PxVec3*) value);
+}
+JNIEXPORT jint JNICALL Java_physx_physics_PxContactPairPoint__1getInternalFaceIndex0(JNIEnv*, jclass, jlong _address) {
+    physx::PxContactPairPoint* _self = (physx::PxContactPairPoint*) _address;
+    return (jint) _self->internalFaceIndex0;
+}
+JNIEXPORT void JNICALL Java_physx_physics_PxContactPairPoint__1setInternalFaceIndex0(JNIEnv*, jclass, jlong _address, jint value) {
+    physx::PxContactPairPoint* _self = (physx::PxContactPairPoint*) _address;
+    _self->internalFaceIndex0 = value;
+}
+JNIEXPORT jlong JNICALL Java_physx_physics_PxContactPairPoint__1getImpulse(JNIEnv*, jclass, jlong _address) {
+    physx::PxContactPairPoint* _self = (physx::PxContactPairPoint*) _address;
+    return (jlong) &_self->impulse;
+}
+JNIEXPORT void JNICALL Java_physx_physics_PxContactPairPoint__1setImpulse(JNIEnv*, jclass, jlong _address, jlong value) {
+    physx::PxContactPairPoint* _self = (physx::PxContactPairPoint*) _address;
+    _self->impulse = *((physx::PxVec3*) value);
+}
+JNIEXPORT jint JNICALL Java_physx_physics_PxContactPairPoint__1getInternalFaceIndex1(JNIEnv*, jclass, jlong _address) {
+    physx::PxContactPairPoint* _self = (physx::PxContactPairPoint*) _address;
+    return (jint) _self->internalFaceIndex1;
+}
+JNIEXPORT void JNICALL Java_physx_physics_PxContactPairPoint__1setInternalFaceIndex1(JNIEnv*, jclass, jlong _address, jint value) {
+    physx::PxContactPairPoint* _self = (physx::PxContactPairPoint*) _address;
+    _self->internalFaceIndex1 = value;
 }
 
 // PxDominanceGroupPair
@@ -9098,6 +9155,37 @@ JNIEXPORT void JNICALL Java_physx_support_Vector_1PxActorPtr__1clear(JNIEnv*, jc
 }
 JNIEXPORT void JNICALL Java_physx_support_Vector_1PxActorPtr__1delete_1native_1instance(JNIEnv*, jclass, jlong _address) {
     delete (Vector_PxActorPtr*) _address;
+}
+
+// Vector_PxContactPairPoint
+JNIEXPORT jlong JNICALL Java_physx_support_Vector_1PxContactPairPoint__1Vector_1PxContactPairPoint__(JNIEnv*, jclass) {
+    return (jlong) new Vector_PxContactPairPoint();
+}
+JNIEXPORT jlong JNICALL Java_physx_support_Vector_1PxContactPairPoint__1Vector_1PxContactPairPoint__I(JNIEnv*, jclass, jint size) {
+    return (jlong) new Vector_PxContactPairPoint(size);
+}
+JNIEXPORT jlong JNICALL Java_physx_support_Vector_1PxContactPairPoint__1at(JNIEnv*, jclass, jlong _address, jint index) {
+    Vector_PxContactPairPoint* self = (Vector_PxContactPairPoint*) _address;
+    return (jlong) &self->at(index);
+}
+JNIEXPORT jlong JNICALL Java_physx_support_Vector_1PxContactPairPoint__1data(JNIEnv*, jclass, jlong _address) {
+    Vector_PxContactPairPoint* self = (Vector_PxContactPairPoint*) _address;
+    return (jlong) self->data();
+}
+JNIEXPORT jint JNICALL Java_physx_support_Vector_1PxContactPairPoint__1size(JNIEnv*, jclass, jlong _address) {
+    Vector_PxContactPairPoint* self = (Vector_PxContactPairPoint*) _address;
+    return (jint) self->size();
+}
+JNIEXPORT void JNICALL Java_physx_support_Vector_1PxContactPairPoint__1push_1back(JNIEnv*, jclass, jlong _address, jlong value) {
+    Vector_PxContactPairPoint* self = (Vector_PxContactPairPoint*) _address;
+    self->push_back(*((physx::PxContactPairPoint*) value));
+}
+JNIEXPORT void JNICALL Java_physx_support_Vector_1PxContactPairPoint__1clear(JNIEnv*, jclass, jlong _address) {
+    Vector_PxContactPairPoint* self = (Vector_PxContactPairPoint*) _address;
+    self->clear();
+}
+JNIEXPORT void JNICALL Java_physx_support_Vector_1PxContactPairPoint__1delete_1native_1instance(JNIEnv*, jclass, jlong _address) {
+    delete (Vector_PxContactPairPoint*) _address;
 }
 
 // Vector_PxRaycastQueryResult
