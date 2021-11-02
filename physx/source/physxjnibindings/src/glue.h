@@ -17,7 +17,7 @@ class JniThreadEnv {
         }
         JNIEnv* getEnv() {
             if (env == NULL && javaVm != NULL) {
-                javaVm->AttachCurrentThread((void**) &env, NULL);
+                javaVm->AttachCurrentThreadAsDaemon((void**) &env, NULL);
                 shouldDetach = true;
             }
             return env;
@@ -191,6 +191,28 @@ class JSPvdTransport : SimplePvdTransport {
         jmethodID sendMethodId;
 };
 
+class JavaPassThroughFilterShader : PassThroughFilterShader {
+    public:
+        JavaPassThroughFilterShader(JNIEnv* env, jobject javaLocalRef) {
+            javaGlobalRef = env->NewGlobalRef(javaLocalRef);
+            jclass javaClass = env->GetObjectClass(javaLocalRef);
+            filterShaderMethodId = env->GetMethodID(javaClass, "_filterShader", "(IIIIIIIIII)I");
+        }
+        
+        ~JavaPassThroughFilterShader() {
+            jniThreadEnv.getEnv()->DeleteGlobalRef(javaGlobalRef);
+        }
+        
+        virtual unsigned int filterShader(unsigned int attributes0, unsigned int filterData0w0, unsigned int filterData0w1, unsigned int filterData0w2, unsigned int filterData0w3, unsigned int attributes1, unsigned int filterData1w0, unsigned int filterData1w1, unsigned int filterData1w2, unsigned int filterData1w3) {
+            JNIEnv* _env = jniThreadEnv.getEnv();
+            return _env->CallIntMethod(javaGlobalRef, filterShaderMethodId, (jint) attributes0, (jint) filterData0w0, (jint) filterData0w1, (jint) filterData0w2, (jint) filterData0w3, (jint) attributes1, (jint) filterData1w0, (jint) filterData1w1, (jint) filterData1w2, (jint) filterData1w3);
+        }
+
+    private:
+        jobject javaGlobalRef;
+        jmethodID filterShaderMethodId;
+};
+
 extern "C" {
 
 // JniThreadManager
@@ -216,6 +238,9 @@ JNIEXPORT jlong JNICALL Java_physx_PxTopLevelFunctions__1DefaultFilterShader(JNI
     static thread_local physx::PxSimulationFilterShader _cache;
     _cache = PxTopLevelFunctions::DefaultFilterShader();
     return (jlong) &_cache;
+}
+JNIEXPORT void JNICALL Java_physx_PxTopLevelFunctions__1setupPassThroughFilterShader(JNIEnv*, jclass, jlong sceneDesc, jlong filterShader) {
+    PxTopLevelFunctions::setupPassThroughFilterShader((physx::PxSceneDesc*) sceneDesc, (PassThroughFilterShader*) filterShader);
 }
 JNIEXPORT jlong JNICALL Java_physx_PxTopLevelFunctions__1CreateControllerManager__J(JNIEnv*, jclass, jlong scene) {
     return (jlong) PxTopLevelFunctions::CreateControllerManager(*((physx::PxScene*) scene));
@@ -8476,6 +8501,31 @@ JNIEXPORT jint JNICALL Java_physx_physics_PxContactPairFlagEnum__1geteINTERNAL_1
     return PxContactPairFlagEnum::eINTERNAL_CONTACTS_ARE_FLIPPED;
 }
 
+// PxFilterFlagEnum
+JNIEXPORT jint JNICALL Java_physx_physics_PxFilterFlagEnum__1geteKILL(JNIEnv*, jclass) {
+    return PxFilterFlagEnum::eKILL;
+}
+JNIEXPORT jint JNICALL Java_physx_physics_PxFilterFlagEnum__1geteSUPPRESS(JNIEnv*, jclass) {
+    return PxFilterFlagEnum::eSUPPRESS;
+}
+JNIEXPORT jint JNICALL Java_physx_physics_PxFilterFlagEnum__1geteCALLBACK(JNIEnv*, jclass) {
+    return PxFilterFlagEnum::eCALLBACK;
+}
+JNIEXPORT jint JNICALL Java_physx_physics_PxFilterFlagEnum__1geteNOTIFY(JNIEnv*, jclass) {
+    return PxFilterFlagEnum::eNOTIFY;
+}
+JNIEXPORT jint JNICALL Java_physx_physics_PxFilterFlagEnum__1geteDEFAULT(JNIEnv*, jclass) {
+    return PxFilterFlagEnum::eDEFAULT;
+}
+
+// PxFilterObjectFlagEnum
+JNIEXPORT jint JNICALL Java_physx_physics_PxFilterObjectFlagEnum__1geteKINEMATIC(JNIEnv*, jclass) {
+    return PxFilterObjectFlagEnum::eKINEMATIC;
+}
+JNIEXPORT jint JNICALL Java_physx_physics_PxFilterObjectFlagEnum__1geteTRIGGER(JNIEnv*, jclass) {
+    return PxFilterObjectFlagEnum::eTRIGGER;
+}
+
 // PxForceModeEnum
 JNIEXPORT jint JNICALL Java_physx_physics_PxForceModeEnum__1geteFORCE(JNIEnv*, jclass) {
     return PxForceModeEnum::eFORCE;
@@ -8618,6 +8668,9 @@ JNIEXPORT jint JNICALL Java_physx_physics_PxPairFlagEnum__1geteNEXT_1FREE(JNIEnv
 }
 JNIEXPORT jint JNICALL Java_physx_physics_PxPairFlagEnum__1geteCONTACT_1DEFAULT(JNIEnv*, jclass) {
     return PxPairFlagEnum::eCONTACT_DEFAULT;
+}
+JNIEXPORT jint JNICALL Java_physx_physics_PxPairFlagEnum__1geteTRIGGER_1DEFAULT(JNIEnv*, jclass) {
+    return PxPairFlagEnum::eTRIGGER_DEFAULT;
 }
 
 // PxPruningStructureTypeEnum
@@ -9464,6 +9517,31 @@ JNIEXPORT void JNICALL Java_physx_support_PxPvdInstrumentationFlags__1delete_1na
 JNIEXPORT jboolean JNICALL Java_physx_support_PxPvd__1connect(JNIEnv*, jclass, jlong _address, jlong transport, jlong flags) {
     physx::PxPvd* self = (physx::PxPvd*) _address;
     return (jboolean) self->connect(*((physx::PxPvdTransport*) transport), *((physx::PxPvdInstrumentationFlags*) flags));
+}
+
+// PassThroughFilterShader
+JNIEXPORT jint JNICALL Java_physx_support_PassThroughFilterShader__1filterShader(JNIEnv*, jclass, jlong _address, jint attributes0, jint filterData0w0, jint filterData0w1, jint filterData0w2, jint filterData0w3, jint attributes1, jint filterData1w0, jint filterData1w1, jint filterData1w2, jint filterData1w3) {
+    PassThroughFilterShader* self = (PassThroughFilterShader*) _address;
+    return (jint) self->filterShader(attributes0, filterData0w0, filterData0w1, filterData0w2, filterData0w3, attributes1, filterData1w0, filterData1w1, filterData1w2, filterData1w3);
+}
+JNIEXPORT void JNICALL Java_physx_support_PassThroughFilterShader__1delete_1native_1instance(JNIEnv*, jclass, jlong _address) {
+    delete (PassThroughFilterShader*) _address;
+}
+JNIEXPORT jint JNICALL Java_physx_support_PassThroughFilterShader__1getOutputPairFlags(JNIEnv*, jclass, jlong _address) {
+    PassThroughFilterShader* _self = (PassThroughFilterShader*) _address;
+    return (jint) _self->outputPairFlags;
+}
+JNIEXPORT void JNICALL Java_physx_support_PassThroughFilterShader__1setOutputPairFlags(JNIEnv*, jclass, jlong _address, jint value) {
+    PassThroughFilterShader* _self = (PassThroughFilterShader*) _address;
+    _self->outputPairFlags = value;
+}
+
+// JavaPassThroughFilterShader
+JNIEXPORT jlong JNICALL Java_physx_support_JavaPassThroughFilterShader__1JavaPassThroughFilterShader(JNIEnv* env, jobject obj) {
+    return (jlong) new JavaPassThroughFilterShader(env, obj);
+}
+JNIEXPORT void JNICALL Java_physx_support_JavaPassThroughFilterShader__1delete_1native_1instance(JNIEnv*, jclass, jlong address) {
+    delete (JavaPassThroughFilterShader*) address;
 }
 
 // PxPvdInstrumentationFlagEnum

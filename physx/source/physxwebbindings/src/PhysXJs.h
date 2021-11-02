@@ -2,6 +2,7 @@
 #include "extensions/PxCollectionExt.h"
 #include <vector>
 #include <cstring>
+#include <iostream>
 
 #if defined(__EMSCRIPTEN__) || defined(__APPLE__)
     #include "PhysXCudaMock.h"
@@ -43,6 +44,8 @@ typedef physx::PxD6Motion::Enum PxD6MotionEnum;
 typedef physx::PxD6JointDriveFlag::Enum PxD6JointDriveFlagEnum;
 typedef physx::PxDistanceJointFlag::Enum PxDistanceJointFlagEnum;
 typedef physx::PxErrorCode::Enum PxErrorCodeEnum;
+typedef physx::PxFilterFlag::Enum PxFilterFlagEnum;
+typedef physx::PxFilterObjectFlag::Enum PxFilterObjectFlagEnum;
 typedef physx::PxForceMode::Enum PxForceModeEnum;
 typedef physx::PxFrictionType::Enum PxFrictionTypeEnum;
 typedef physx::PxGeometryType::Enum PxGeometryTypeEnum;
@@ -118,6 +121,34 @@ typedef std::vector<physx::PxU8> Vector_PxU8;
 typedef std::vector<physx::PxU16> Vector_PxU16;
 typedef std::vector<physx::PxU32> Vector_PxU32;
 typedef std::vector<physx::PxVec3> Vector_PxVec3;
+
+class PassThroughFilterShader {
+    public:
+        virtual physx::PxU32 filterShader(physx::PxU32 attributes0,
+                                          physx::PxU32 filterData0w0, physx::PxU32 filterData0w1, physx::PxU32 filterData0w2, physx::PxU32 filterData0w3,
+                                          physx::PxU32 attributes1,
+                                          physx::PxU32 filterData1w0, physx::PxU32 filterData1w1, physx::PxU32 filterData1w2, physx::PxU32 filterData1w3) = 0;
+
+        virtual ~PassThroughFilterShader() { }
+
+        physx::PxU32 outputPairFlags;
+};
+
+physx::PxFilterFlags passThrFilterShader(physx::PxFilterObjectAttributes attributes0, physx::PxFilterData filterData0,
+                                         physx::PxFilterObjectAttributes attributes1, physx::PxFilterData filterData1,
+                                         physx::PxPairFlags& pairFlags, const void* constantBlock, physx::PxU32 constantBlockSize) {
+    PX_UNUSED(constantBlockSize);
+
+    PassThroughFilterShader* shader = *((PassThroughFilterShader* const *) constantBlock);
+    shader->outputPairFlags = physx::PxPairFlag::eCONTACT_DEFAULT;
+
+    physx::PxFilterFlags result = static_cast<physx::PxFilterFlags>(static_cast<physx::PxU16>(shader->filterShader(
+            (physx::PxU32) attributes0, filterData0.word0, filterData0.word1, filterData0.word2, filterData0.word3,
+            (physx::PxU32) attributes1, filterData1.word0, filterData1.word1, filterData1.word2, filterData1.word3)));
+
+    pairFlags = static_cast<physx::PxPairFlags>(static_cast<physx::PxU16>(shader->outputPairFlags));
+    return result;
+}
 
 // default scene filter / query shaders, implemented in C++ for performance reasons
 physx::PxFilterFlags defaultFilterShader(physx::PxFilterObjectAttributes attributes0, physx::PxFilterData filterData0,
@@ -215,6 +246,14 @@ class PxTopLevelFunctions {
 
         static physx::PxSimulationFilterShader DefaultFilterShader() {
             return &defaultFilterShader;
+        }
+
+        static void setupPassThroughFilterShader(physx::PxSceneDesc* sceneDesc, PassThroughFilterShader* filterShader) {
+            PassThroughFilterShader** data = new PassThroughFilterShader*[1];
+            data[0] = filterShader;
+            sceneDesc->filterShader = &passThrFilterShader;
+            sceneDesc->filterShaderData = data;
+            sceneDesc->filterShaderDataSize = sizeof(PassThroughFilterShader*);
         }
 
         static physx::PxFoundation* CreateFoundation(physx::PxU32 version, physx::PxDefaultAllocator& allocator, physx::PxErrorCallback& errorCallback) {
