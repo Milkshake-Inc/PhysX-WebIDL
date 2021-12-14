@@ -142,11 +142,11 @@ physx::PxFilterFlags passThrFilterShader(physx::PxFilterObjectAttributes attribu
     PassThroughFilterShader* shader = *((PassThroughFilterShader* const *) constantBlock);
     shader->outputPairFlags = physx::PxPairFlag::eCONTACT_DEFAULT;
 
-    physx::PxFilterFlags result = static_cast<physx::PxFilterFlags>(static_cast<physx::PxU16>(shader->filterShader(
+    physx::PxFilterFlags result = physx::PxFilterFlags(static_cast<physx::PxU16>(shader->filterShader(
             (physx::PxU32) attributes0, filterData0.word0, filterData0.word1, filterData0.word2, filterData0.word3,
             (physx::PxU32) attributes1, filterData1.word0, filterData1.word1, filterData1.word2, filterData1.word3)));
 
-    pairFlags = static_cast<physx::PxPairFlags>(static_cast<physx::PxU16>(shader->outputPairFlags));
+    pairFlags = physx::PxPairFlags(static_cast<physx::PxU16>(shader->outputPairFlags));
     return result;
 }
 
@@ -237,6 +237,25 @@ class SimplePvdTransport : physx::PxPvdTransport {
         void flush() { }
         uint64_t getWrittenDataSize() { return 0; }
         void release() { }
+};
+
+class SimpleControllerBehaviorCallback : physx::PxControllerBehaviorCallback {
+    public:
+        virtual physx::PxU32 getShapeBehaviorFlags(const physx::PxShape& shape, const physx::PxActor& actor) = 0;
+        virtual physx::PxU32 getControllerBehaviorFlags(const physx::PxController& controller) = 0;
+        virtual physx::PxU32 getObstacleBehaviorFlags(const physx::PxObstacle& obstacle) = 0;
+
+        virtual physx::PxControllerBehaviorFlags getBehaviorFlags(const physx::PxShape& shape, const physx::PxActor& actor) {
+            return physx::PxControllerBehaviorFlags(static_cast<physx::PxU8>(getShapeBehaviorFlags(shape, actor)));
+        };
+        virtual physx::PxControllerBehaviorFlags getBehaviorFlags(const physx::PxController& controller) {
+            return physx::PxControllerBehaviorFlags(static_cast<physx::PxU8>(getControllerBehaviorFlags(controller)));
+        };
+        virtual physx::PxControllerBehaviorFlags getBehaviorFlags(const physx::PxObstacle& obstacle) {
+            return physx::PxControllerBehaviorFlags(static_cast<physx::PxU8>(getObstacleBehaviorFlags(obstacle)));
+        };
+
+        virtual ~SimpleControllerBehaviorCallback() { }
 };
 
 // top-level functions are not supported by webidl binder, we need to wrap them in a class
@@ -387,7 +406,27 @@ class TypeHelpers {
             return base[index];
         }
 
+        static physx::PxActor* getActorAt(physx::PxActor* base, int index) {
+            return &base[index];
+        }
+
         static physx::PxContactPair* getContactPairAt(physx::PxContactPair* base, int index) {
+            return &base[index];
+        }
+
+        static physx::PxContactPairHeader* getContactPairHeaderAt(physx::PxContactPairHeader* base, int index) {
+            return &base[index];
+        }
+
+        static physx::PxController* getControllerAt(physx::PxController* base, int index) {
+            return &base[index];
+        }
+
+        static physx::PxObstacle* getObstacleAt(physx::PxObstacle* base, int index) {
+            return &base[index];
+        }
+
+        static physx::PxShape* getShapeAt(physx::PxShape* base, int index) {
             return &base[index];
         }
 

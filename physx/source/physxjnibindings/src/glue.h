@@ -126,6 +126,42 @@ class JavaErrorCallback : physx::PxErrorCallback {
         jmethodID reportErrorMethodId;
 };
 
+class JavaControllerBehaviorCallback : SimpleControllerBehaviorCallback {
+    public:
+        JavaControllerBehaviorCallback(JNIEnv* env, jobject javaLocalRef) {
+            javaGlobalRef = env->NewGlobalRef(javaLocalRef);
+            jclass javaClass = env->GetObjectClass(javaLocalRef);
+            getShapeBehaviorFlagsMethodId = env->GetMethodID(javaClass, "_getShapeBehaviorFlags", "(JJ)I");
+            getControllerBehaviorFlagsMethodId = env->GetMethodID(javaClass, "_getControllerBehaviorFlags", "(J)I");
+            getObstacleBehaviorFlagsMethodId = env->GetMethodID(javaClass, "_getObstacleBehaviorFlags", "(J)I");
+        }
+        
+        ~JavaControllerBehaviorCallback() {
+            jniThreadEnv.getEnv()->DeleteGlobalRef(javaGlobalRef);
+        }
+        
+        virtual unsigned int getShapeBehaviorFlags(const physx::PxShape& shape, const physx::PxActor& actor) {
+            JNIEnv* _env = jniThreadEnv.getEnv();
+            return _env->CallIntMethod(javaGlobalRef, getShapeBehaviorFlagsMethodId, (jlong) &shape, (jlong) &actor);
+        }
+
+        virtual unsigned int getControllerBehaviorFlags(const physx::PxController& controller) {
+            JNIEnv* _env = jniThreadEnv.getEnv();
+            return _env->CallIntMethod(javaGlobalRef, getControllerBehaviorFlagsMethodId, (jlong) &controller);
+        }
+
+        virtual unsigned int getObstacleBehaviorFlags(const physx::PxObstacle& obstacle) {
+            JNIEnv* _env = jniThreadEnv.getEnv();
+            return _env->CallIntMethod(javaGlobalRef, getObstacleBehaviorFlagsMethodId, (jlong) &obstacle);
+        }
+
+    private:
+        jobject javaGlobalRef;
+        jmethodID getShapeBehaviorFlagsMethodId;
+        jmethodID getControllerBehaviorFlagsMethodId;
+        jmethodID getObstacleBehaviorFlagsMethodId;
+};
+
 class JavaUserControllerHitReport : physx::PxUserControllerHitReport {
     public:
         JavaUserControllerHitReport(JNIEnv* env, jobject javaLocalRef) {
@@ -598,6 +634,53 @@ JNIEXPORT void JNICALL Java_physx_character_PxController__1resize(JNIEnv*, jclas
     self->resize(height);
 }
 
+// PxControllerBehaviorCallback
+
+// SimpleControllerBehaviorCallback
+JNIEXPORT jint JNICALL Java_physx_character_SimpleControllerBehaviorCallback__1getShapeBehaviorFlags(JNIEnv*, jclass, jlong _address, jlong shape, jlong actor) {
+    SimpleControllerBehaviorCallback* self = (SimpleControllerBehaviorCallback*) _address;
+    return (jint) self->getShapeBehaviorFlags(*((physx::PxShape*) shape), *((physx::PxActor*) actor));
+}
+JNIEXPORT jint JNICALL Java_physx_character_SimpleControllerBehaviorCallback__1getControllerBehaviorFlags(JNIEnv*, jclass, jlong _address, jlong controller) {
+    SimpleControllerBehaviorCallback* self = (SimpleControllerBehaviorCallback*) _address;
+    return (jint) self->getControllerBehaviorFlags(*((physx::PxController*) controller));
+}
+JNIEXPORT jint JNICALL Java_physx_character_SimpleControllerBehaviorCallback__1getObstacleBehaviorFlags(JNIEnv*, jclass, jlong _address, jlong obstacle) {
+    SimpleControllerBehaviorCallback* self = (SimpleControllerBehaviorCallback*) _address;
+    return (jint) self->getObstacleBehaviorFlags(*((physx::PxObstacle*) obstacle));
+}
+JNIEXPORT void JNICALL Java_physx_character_SimpleControllerBehaviorCallback__1delete_1native_1instance(JNIEnv*, jclass, jlong _address) {
+    delete (SimpleControllerBehaviorCallback*) _address;
+}
+
+// JavaControllerBehaviorCallback
+JNIEXPORT jlong JNICALL Java_physx_character_JavaControllerBehaviorCallback__1JavaControllerBehaviorCallback(JNIEnv* env, jobject obj) {
+    return (jlong) new JavaControllerBehaviorCallback(env, obj);
+}
+JNIEXPORT void JNICALL Java_physx_character_JavaControllerBehaviorCallback__1delete_1native_1instance(JNIEnv*, jclass, jlong address) {
+    delete (JavaControllerBehaviorCallback*) address;
+}
+
+// PxControllerBehaviorFlags
+JNIEXPORT jlong JNICALL Java_physx_character_PxControllerBehaviorFlags__1PxControllerBehaviorFlags(JNIEnv*, jclass, jbyte flags) {
+    return (jlong) new physx::PxControllerBehaviorFlags(flags);
+}
+JNIEXPORT jboolean JNICALL Java_physx_character_PxControllerBehaviorFlags__1isSet(JNIEnv*, jclass, jlong _address, jint flag) {
+    physx::PxControllerBehaviorFlags* self = (physx::PxControllerBehaviorFlags*) _address;
+    return (jboolean) self->isSet((PxControllerBehaviorFlagEnum) flag);
+}
+JNIEXPORT void JNICALL Java_physx_character_PxControllerBehaviorFlags__1set(JNIEnv*, jclass, jlong _address, jint flag) {
+    physx::PxControllerBehaviorFlags* self = (physx::PxControllerBehaviorFlags*) _address;
+    self->set((PxControllerBehaviorFlagEnum) flag);
+}
+JNIEXPORT void JNICALL Java_physx_character_PxControllerBehaviorFlags__1clear(JNIEnv*, jclass, jlong _address, jint flag) {
+    physx::PxControllerBehaviorFlags* self = (physx::PxControllerBehaviorFlags*) _address;
+    self->clear((PxControllerBehaviorFlagEnum) flag);
+}
+JNIEXPORT void JNICALL Java_physx_character_PxControllerBehaviorFlags__1delete_1native_1instance(JNIEnv*, jclass, jlong _address) {
+    delete (physx::PxControllerBehaviorFlags*) _address;
+}
+
 // PxControllerCollisionFlags
 JNIEXPORT jlong JNICALL Java_physx_character_PxControllerCollisionFlags__1PxControllerCollisionFlags(JNIEnv*, jclass, jbyte flags) {
     return (jlong) new physx::PxControllerCollisionFlags(flags);
@@ -714,6 +797,14 @@ JNIEXPORT jlong JNICALL Java_physx_character_PxControllerDesc__1getReportCallbac
 JNIEXPORT void JNICALL Java_physx_character_PxControllerDesc__1setReportCallback(JNIEnv*, jclass, jlong _address, jlong value) {
     physx::PxControllerDesc* _self = (physx::PxControllerDesc*) _address;
     _self->reportCallback = (physx::PxUserControllerHitReport*) value;
+}
+JNIEXPORT jlong JNICALL Java_physx_character_PxControllerDesc__1getBehaviorCallback(JNIEnv*, jclass, jlong _address) {
+    physx::PxControllerDesc* _self = (physx::PxControllerDesc*) _address;
+    return (jlong) _self->behaviorCallback;
+}
+JNIEXPORT void JNICALL Java_physx_character_PxControllerDesc__1setBehaviorCallback(JNIEnv*, jclass, jlong _address, jlong value) {
+    physx::PxControllerDesc* _self = (physx::PxControllerDesc*) _address;
+    _self->behaviorCallback = (physx::PxControllerBehaviorCallback*) value;
 }
 JNIEXPORT jint JNICALL Java_physx_character_PxControllerDesc__1getNonWalkableMode(JNIEnv*, jclass, jlong _address) {
     physx::PxControllerDesc* _self = (physx::PxControllerDesc*) _address;
@@ -1179,6 +1270,17 @@ JNIEXPORT jint JNICALL Java_physx_character_PxCapsuleClimbingModeEnum__1geteEASY
 }
 JNIEXPORT jint JNICALL Java_physx_character_PxCapsuleClimbingModeEnum__1geteCONSTRAINED(JNIEnv*, jclass) {
     return PxCapsuleClimbingModeEnum::eCONSTRAINED;
+}
+
+// PxControllerBehaviorFlagEnum
+JNIEXPORT jint JNICALL Java_physx_character_PxControllerBehaviorFlagEnum__1geteCCT_1CAN_1RIDE_1ON_1OBJECT(JNIEnv*, jclass) {
+    return PxControllerBehaviorFlagEnum::eCCT_CAN_RIDE_ON_OBJECT;
+}
+JNIEXPORT jint JNICALL Java_physx_character_PxControllerBehaviorFlagEnum__1geteCCT_1SLIDE(JNIEnv*, jclass) {
+    return PxControllerBehaviorFlagEnum::eCCT_SLIDE;
+}
+JNIEXPORT jint JNICALL Java_physx_character_PxControllerBehaviorFlagEnum__1geteCCT_1USER_1DEFINED_1RIDE(JNIEnv*, jclass) {
+    return PxControllerBehaviorFlagEnum::eCCT_USER_DEFINED_RIDE;
 }
 
 // PxControllerCollisionFlagEnum
@@ -8923,8 +9025,23 @@ JNIEXPORT jint JNICALL Java_physx_support_TypeHelpers__1getU32At(JNIEnv*, jclass
 JNIEXPORT jfloat JNICALL Java_physx_support_TypeHelpers__1getRealAt(JNIEnv*, jclass, jlong base, jint index) {
     return (jfloat) TypeHelpers::getRealAt(*((PxRealPtr*) base), index);
 }
+JNIEXPORT jlong JNICALL Java_physx_support_TypeHelpers__1getActorAt(JNIEnv*, jclass, jlong base, jint index) {
+    return (jlong) TypeHelpers::getActorAt((physx::PxActor*) base, index);
+}
 JNIEXPORT jlong JNICALL Java_physx_support_TypeHelpers__1getContactPairAt(JNIEnv*, jclass, jlong base, jint index) {
     return (jlong) TypeHelpers::getContactPairAt((physx::PxContactPair*) base, index);
+}
+JNIEXPORT jlong JNICALL Java_physx_support_TypeHelpers__1getContactPairHeaderAt(JNIEnv*, jclass, jlong base, jint index) {
+    return (jlong) TypeHelpers::getContactPairHeaderAt((physx::PxContactPairHeader*) base, index);
+}
+JNIEXPORT jlong JNICALL Java_physx_support_TypeHelpers__1getControllerAt(JNIEnv*, jclass, jlong base, jint index) {
+    return (jlong) TypeHelpers::getControllerAt((physx::PxController*) base, index);
+}
+JNIEXPORT jlong JNICALL Java_physx_support_TypeHelpers__1getObstacleAt(JNIEnv*, jclass, jlong base, jint index) {
+    return (jlong) TypeHelpers::getObstacleAt((physx::PxObstacle*) base, index);
+}
+JNIEXPORT jlong JNICALL Java_physx_support_TypeHelpers__1getShapeAt(JNIEnv*, jclass, jlong base, jint index) {
+    return (jlong) TypeHelpers::getShapeAt((physx::PxShape*) base, index);
 }
 JNIEXPORT jlong JNICALL Java_physx_support_TypeHelpers__1getTriggerPairAt(JNIEnv*, jclass, jlong base, jint index) {
     return (jlong) TypeHelpers::getTriggerPairAt((physx::PxTriggerPair*) base, index);
