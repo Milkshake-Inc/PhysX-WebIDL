@@ -8950,6 +8950,9 @@ JNIEXPORT jint JNICALL Java_physx_physics_PxTriggerPairFlagEnum__1geteNEXT_1FREE
 JNIEXPORT jlong JNICALL Java_physx_support_SupportFunctions__1PxActor_1getShape(JNIEnv*, jclass, jlong actor, jint index) {
     return (jlong) SupportFunctions::PxActor_getShape(*((physx::PxRigidActor*) actor), index);
 }
+JNIEXPORT jlong JNICALL Java_physx_support_SupportFunctions__1PxContactPairHeader_1getActor(JNIEnv*, jclass, jlong pairHeader, jint index) {
+    return (jlong) SupportFunctions::PxContactPairHeader_getActor(*((physx::PxContactPairHeader*) pairHeader), index);
+}
 JNIEXPORT jlong JNICALL Java_physx_support_SupportFunctions__1PxScene_1getActiveActors(JNIEnv*, jclass, jlong scene) {
     return (jlong) &SupportFunctions::PxScene_getActiveActors((physx::PxScene*) scene);
 }

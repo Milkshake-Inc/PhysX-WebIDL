@@ -247,13 +247,13 @@ class SimpleControllerBehaviorCallback : physx::PxControllerBehaviorCallback {
 
         virtual physx::PxControllerBehaviorFlags getBehaviorFlags(const physx::PxShape& shape, const physx::PxActor& actor) {
             return physx::PxControllerBehaviorFlags(static_cast<physx::PxU8>(getShapeBehaviorFlags(shape, actor)));
-        };
+        }
         virtual physx::PxControllerBehaviorFlags getBehaviorFlags(const physx::PxController& controller) {
             return physx::PxControllerBehaviorFlags(static_cast<physx::PxU8>(getControllerBehaviorFlags(controller)));
-        };
+        }
         virtual physx::PxControllerBehaviorFlags getBehaviorFlags(const physx::PxObstacle& obstacle) {
             return physx::PxControllerBehaviorFlags(static_cast<physx::PxU8>(getObstacleBehaviorFlags(obstacle)));
-        };
+        }
 
         virtual ~SimpleControllerBehaviorCallback() { }
 };
@@ -471,6 +471,10 @@ class SupportFunctions {
             physx::PxShape* shapePtr;
             actor.getShapes(&shapePtr, 1, i);
             return shapePtr;
+        }
+
+        static physx::PxActor* PxContactPairHeader_getActor(physx::PxContactPairHeader& pairHeader, physx::PxU32 i) {
+            return pairHeader.actors[i];
         }
 
         static Vector_PxActorPtr& PxScene_getActiveActors(physx::PxScene* scene) {
