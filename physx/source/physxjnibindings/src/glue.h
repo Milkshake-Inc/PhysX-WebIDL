@@ -1138,6 +1138,15 @@ JNIEXPORT void JNICALL Java_physx_character_PxControllerStats__1setNbTessellatio
 }
 
 // PxExtendedVec3
+JNIEXPORT jint JNICALL Java_physx_character_PxExtendedVec3__1_1sizeOf(JNIEnv*, jclass) {
+    return sizeof(physx::PxExtendedVec3);
+}
+JNIEXPORT jlong JNICALL Java_physx_character_PxExtendedVec3__1_1placement_1new_1PxExtendedVec3__J(JNIEnv*, jclass, jlong _placement_address) {
+    return (jlong) new((void*)_placement_address) physx::PxExtendedVec3();
+}
+JNIEXPORT jlong JNICALL Java_physx_character_PxExtendedVec3__1_1placement_1new_1PxExtendedVec3__JDDD(JNIEnv*, jclass, jlong _placement_address, jdouble x, jdouble y, jdouble z) {
+    return (jlong) new((void*)_placement_address) physx::PxExtendedVec3(x, y, z);
+}
 JNIEXPORT jlong JNICALL Java_physx_character_PxExtendedVec3__1PxExtendedVec3__(JNIEnv*, jclass) {
     return (jlong) new physx::PxExtendedVec3();
 }
@@ -3004,6 +3013,28 @@ JNIEXPORT jfloat JNICALL Java_physx_extensions_PxJointLinearLimitPair__1getLower
 JNIEXPORT void JNICALL Java_physx_extensions_PxJointLinearLimitPair__1setLower(JNIEnv*, jclass, jlong _address, jfloat value) {
     physx::PxJointLinearLimitPair* _self = (physx::PxJointLinearLimitPair*) _address;
     _self->lower = value;
+}
+
+// PxMeshOverlapUtil
+JNIEXPORT jlong JNICALL Java_physx_extensions_PxMeshOverlapUtil__1PxMeshOverlapUtil(JNIEnv*, jclass) {
+    return (jlong) new physx::PxMeshOverlapUtil();
+}
+JNIEXPORT jint JNICALL Java_physx_extensions_PxMeshOverlapUtil__1findOverlap(JNIEnv*, jclass, jlong _address, jlong geom, jlong geomPose, jlong meshGeom, jlong meshPose) {
+    physx::PxMeshOverlapUtil* self = (physx::PxMeshOverlapUtil*) _address;
+    return (jint) self->findOverlap(*((physx::PxGeometry*) geom), *((physx::PxTransform*) geomPose), *((physx::PxTriangleMeshGeometry*) meshGeom), *((physx::PxTransform*) meshPose));
+}
+JNIEXPORT jlong JNICALL Java_physx_extensions_PxMeshOverlapUtil__1getResults(JNIEnv*, jclass, jlong _address) {
+    static thread_local PxU32ConstPtr _cache;
+    physx::PxMeshOverlapUtil* self = (physx::PxMeshOverlapUtil*) _address;
+    _cache = self->getResults();
+    return (jlong) &_cache;
+}
+JNIEXPORT jint JNICALL Java_physx_extensions_PxMeshOverlapUtil__1getNbResults(JNIEnv*, jclass, jlong _address) {
+    physx::PxMeshOverlapUtil* self = (physx::PxMeshOverlapUtil*) _address;
+    return (jint) self->getNbResults();
+}
+JNIEXPORT void JNICALL Java_physx_extensions_PxMeshOverlapUtil__1delete_1native_1instance(JNIEnv*, jclass, jlong _address) {
+    delete (physx::PxMeshOverlapUtil*) _address;
 }
 
 // PxPrismaticJoint

@@ -2790,6 +2790,14 @@ interface PxJointLinearLimitPair {
 PxJointLinearLimitPair implements PxJointLimitParameters;
 
 [Prefix="physx::"]
+interface PxMeshOverlapUtil {
+    void PxMeshOverlapUtil();
+    unsigned long findOverlap([Const, Ref] PxGeometry geom, [Const, Ref] PxTransform geomPose, [Const, Ref] PxTriangleMeshGeometry meshGeom, [Const, Ref] PxTransform meshPose);
+    [Value] PxU32ConstPtr getResults();
+    unsigned long getNbResults();
+};
+
+[Prefix="physx::"]
 interface PxPrismaticJoint {
     float getPosition();
     float getVelocity();
