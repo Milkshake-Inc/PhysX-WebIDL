@@ -44,7 +44,9 @@ SET(EMCC_WASM_ARGS
 		--post-js glue.js
 		--post-js ${PHYSXJS_ONLOAD_FILE}
 		-s MODULARIZE=1
-		-s EXPORT_NAME=PhysX
+		-s EXPORT_ES6=1
+		-s STRICT_JS=0
+		-s EXPORT_NAME=SetupPhysX
 		-s WASM=1
 		-s NO_EXIT_RUNTIME=1
 		-s NO_FILESYSTEM=1

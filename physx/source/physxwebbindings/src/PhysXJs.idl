@@ -1178,6 +1178,12 @@ interface PxSceneLimits {
     attribute unsigned long maxNbBroadPhaseOverlaps;
 };
 
+[Prefix="physx::"]
+interface PxShapeExt {
+    [Value] static PxTransform getGlobalPose([Const, Ref] PxShape shape, [Const, Ref] PxRigidActor actor);
+    [Value] static PxBounds3 getWorldBounds([Const, Ref] PxShape shape, [Const, Ref] PxRigidActor actor, optional float inflation);
+};
+
 [Prefix="physx::", NoDelete]
 interface PxShape {
     unsigned long getReferenceCount();
