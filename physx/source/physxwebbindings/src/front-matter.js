@@ -1,1 +1,2 @@
-export let Instance;
+export var PhysX;
+export

@@ -1,1 +1,1 @@
-Instance = Module;
+PhysX = createModule;
