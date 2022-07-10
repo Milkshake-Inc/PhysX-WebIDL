@@ -3278,6 +3278,7 @@ interface JavaUserControllerHitReport {
 interface SupportFunctions {
     static PxShape PxActor_getShape([Ref] PxRigidActor actor, long index);
     static PxActor PxContactPairHeader_getActor([Ref] PxContactPairHeader pairHeader, long index);
+    static PxShape PxContactPair_getShape([Ref] PxContactPair pairHeader, long index);
     [Ref] static Vector_PxActorPtr PxScene_getActiveActors(PxScene scene);
 };
 

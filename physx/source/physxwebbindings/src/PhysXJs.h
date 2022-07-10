@@ -477,6 +477,10 @@ class SupportFunctions {
             return pairHeader.actors[i];
         }
 
+        static physx::PxShape* PxContactPair_getShape(physx::PxContactPair& pair, physx::PxU32 i) {
+            return pair.shapes[i];
+        }
+
         static Vector_PxActorPtr& PxScene_getActiveActors(physx::PxScene* scene) {
             static Vector_PxActorPtr activeActors;
             physx::PxU32 nbActors;
