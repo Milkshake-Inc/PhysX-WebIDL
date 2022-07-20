@@ -164,7 +164,7 @@ physx::PxFilterFlags defaultFilterShader(physx::PxFilterObjectAttributes attribu
     if (physx::PxFilterObjectIsTrigger(attributes0) || physx::PxFilterObjectIsTrigger(attributes1)) {
         pairFlags = physx::PxPairFlag::eTRIGGER_DEFAULT;
     } else {
-        pairFlags = physx::PxPairFlag::eCONTACT_DEFAULT;
+        pairFlags = physx::PxPairFlag::eCONTACT_DEFAULT | physx::PxPairFlag::eNOTIFY_CONTACT_POINTS;
     }
     pairFlags |= physx::PxPairFlags(physx::PxU16(filterData0.word2 | filterData1.word2));
 
