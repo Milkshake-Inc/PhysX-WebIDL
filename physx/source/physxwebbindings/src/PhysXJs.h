@@ -166,6 +166,7 @@ physx::PxFilterFlags defaultFilterShader(physx::PxFilterObjectAttributes attribu
     } else {
         pairFlags = physx::PxPairFlag::eCONTACT_DEFAULT | physx::PxPairFlag::eNOTIFY_CONTACT_POINTS;
     }
+    pairFlags |= physx::PxPairFlag::eDETECT_CCD_CONTACT;
     pairFlags |= physx::PxPairFlags(physx::PxU16(filterData0.word2 | filterData1.word2));
 
     return physx::PxFilterFlag::eDEFAULT;
