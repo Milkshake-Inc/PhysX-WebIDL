@@ -1,4 +1,5 @@
 #include "PxPhysicsAPI.h"
+#include "extensions/PxRaycastCCD.h"
 #include "extensions/PxCollectionExt.h"
 #include <vector>
 #include <cstring>
@@ -278,6 +279,10 @@ class PxTopLevelFunctions {
 
         static physx::PxFoundation* CreateFoundation(physx::PxU32 version, physx::PxDefaultAllocator& allocator, physx::PxErrorCallback& errorCallback) {
             return PxCreateFoundation(version, allocator, errorCallback);
+        }
+
+        static physx::RaycastCCDManager* CreateRaycastCCD(physx::PxScene* scene) {
+            return new physx::RaycastCCDManager(scene);
         }
 
         static physx::PxPhysics *CreatePhysics(physx::PxU32 version, physx::PxFoundation &foundation, const physx::PxTolerancesScale &scale, physx::PxPvd* pvd = NULL)
