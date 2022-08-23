@@ -171,6 +171,14 @@ public:
 	{
 		if(mActor==actor && mShape==shape)
 			return PxQueryHitType::eNONE;
+
+		PxFilterData filterData0 = shape->getSimulationFilterData();
+		PxFilterData filterData1 = mShape->getSimulationFilterData();
+
+		if ((0 == (filterData0.word0 & filterData1.word1)) && (0 == (filterData1.word0 & filterData0.word1))) {
+			return PxQueryHitType::eNONE;
+		}
+
 		return PxQueryHitType::eBLOCK;
 	}
 
