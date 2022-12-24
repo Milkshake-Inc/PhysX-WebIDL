@@ -51,6 +51,7 @@ class RaycastCCDManagerInternal
 				~RaycastCCDManagerInternal(){}
 
 		bool	registerRaycastCCDObject(PxRigidDynamic* actor, PxShape* shape);
+		bool	unregisterRaycastCCDObject(PxRigidDynamic* actor, PxShape* shape);
 
 		void	doRaycastCCD(bool doDynamicDynamicCCD);
 
@@ -274,6 +275,24 @@ bool RaycastCCDManagerInternal::registerRaycastCCDObject(PxRigidDynamic* actor, 
 	return true;
 }
 
+bool RaycastCCDManagerInternal::unregisterRaycastCCDObject(PxRigidDynamic* actor, PxShape* shape)
+{
+	if(!actor || !shape)
+		return false;
+
+	const PxU32 nbObjects = mObjects.size();
+	for(PxU32 i=0;i<nbObjects;i++)
+	{
+		CCDObject& object = mObjects[i];
+
+		if(object.mActor == actor && object.mShape == shape) {
+			mObjects.remove(i);
+			return true;
+		}
+	}
+	return false;
+}
+
 void RaycastCCDManagerInternal::doRaycastCCD(bool doDynamicDynamicCCD)
 {
 	const PxU32 nbObjects = mObjects.size();
@@ -305,6 +324,11 @@ RaycastCCDManager::~RaycastCCDManager()
 bool RaycastCCDManager::registerRaycastCCDObject(PxRigidDynamic* actor, PxShape* shape)
 {
 	return mImpl->registerRaycastCCDObject(actor, shape);
+}
+
+bool RaycastCCDManager::unregisterRaycastCCDObject(PxRigidDynamic* actor, PxShape* shape)
+{
+	return mImpl->unregisterRaycastCCDObject(actor, shape);
 }
 
 void RaycastCCDManager::doRaycastCCD(bool doDynamicDynamicCCD)
