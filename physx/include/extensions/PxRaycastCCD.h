@@ -92,6 +92,12 @@ namespace physx
 			bool	unregisterRaycastCCDObject(PxRigidDynamic* actor, PxShape* shape);
 
 			/**
+			\brief Release all memory.
+
+			*/
+			void	release();
+
+			/**
 			\brief Perform raycast CCD. Call this after your simulate/fetchResults calls.
 
 			\param[in] doDynamicDynamicCCD	True to enable dynamic-vs-dynamic CCD (more expensive, not always needed)

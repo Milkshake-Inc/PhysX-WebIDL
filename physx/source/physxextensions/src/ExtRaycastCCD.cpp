@@ -52,6 +52,7 @@ class RaycastCCDManagerInternal
 
 		bool	registerRaycastCCDObject(PxRigidDynamic* actor, PxShape* shape);
 		bool	unregisterRaycastCCDObject(PxRigidDynamic* actor, PxShape* shape);
+		void    release();
 
 		void	doRaycastCCD(bool doDynamicDynamicCCD);
 
@@ -293,6 +294,11 @@ bool RaycastCCDManagerInternal::unregisterRaycastCCDObject(PxRigidDynamic* actor
 	return false;
 }
 
+void RaycastCCDManagerInternal::release()
+{
+	mObjects.clear();
+}
+
 void RaycastCCDManagerInternal::doRaycastCCD(bool doDynamicDynamicCCD)
 {
 	const PxU32 nbObjects = mObjects.size();
@@ -329,6 +335,11 @@ bool RaycastCCDManager::registerRaycastCCDObject(PxRigidDynamic* actor, PxShape*
 bool RaycastCCDManager::unregisterRaycastCCDObject(PxRigidDynamic* actor, PxShape* shape)
 {
 	return mImpl->unregisterRaycastCCDObject(actor, shape);
+}
+
+void RaycastCCDManager::release()
+{
+	mImpl->release();
 }
 
 void RaycastCCDManager::doRaycastCCD(bool doDynamicDynamicCCD)

@@ -32,6 +32,7 @@ interface PxTopLevelFunctions {
 interface RaycastCCDManager {
     boolean registerRaycastCCDObject(PxRigidDynamic actor, PxShape shape);
     boolean unregisterRaycastCCDObject(PxRigidDynamic actor, PxShape shape);
+    void release();
     void doRaycastCCD(boolean doDynamicDynamicCCD);
 };
 
